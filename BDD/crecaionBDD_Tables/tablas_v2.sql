@@ -20,7 +20,7 @@ USE `apliacacion_web_bdd` ;
 -- -----------------------------------------------------
 -- Table `apliacacion_web_bdd`.`datosUsuarios`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `apliacacion_web_bdd`.`datosUsuarios` (
+CREATE TABLE IF NOT EXISTS `apliacacion_web_bdd`.`usuarios` (
   `id_user` INT NOT NULL AUTO_INCREMENT,
   `user_name` VARCHAR(20) NOT NULL,
   `password` VARCHAR(64) NOT NULL,
@@ -31,7 +31,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `apliacacion_web_bdd`.`datosTarea`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `apliacacion_web_bdd`.`datosTarea` (
+CREATE TABLE IF NOT EXISTS `apliacacion_web_bdd`.`tareas` (
   `id_tarea` INT NOT NULL AUTO_INCREMENT,
   `id_user` INT NOT NULL,
   `description` VARCHAR(60) NULL,
