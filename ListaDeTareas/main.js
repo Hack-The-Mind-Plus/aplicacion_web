@@ -54,10 +54,15 @@ function DisplayTodos () {
 		input.checked = todo.done;
 		span.classList.add('bubble');
 		if (todo.category == 'personal') {
-			span.classList.add('personal');
-		} else {
-			span.classList.add('business');
-		}
+            span.classList.add('personal');
+        } else if (todo.category == 'business') {
+            span.classList.add('business');
+        } else if (todo.category == 'school') {
+            span.classList.add('school');
+        } else if (todo.category == 'miscelanea') {
+            span.classList.add('miscelanea');
+        }
+        
 		content.classList.add('todo-content');
 		actions.classList.add('actions');
 		edit.classList.add('edit');
