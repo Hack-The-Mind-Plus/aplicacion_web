@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const sessionMiddleware = require('./session'); // Importar la configuración de sesiones
 const connection = require('./conexion'); // Importar la conexión a la base de datos
+const path = require('path');
 
 const app = express();
 const saltRounds = 10;
@@ -13,24 +14,14 @@ app.use(express.urlencoded({ extended: true }));
 // Configuración de express-sessión
 app.use(sessionMiddleware);
 
-/*/Middleware de autenticación, protege archivos o páginas que se muestran solo estando logeado
-function requireAuth(req, res, next) {
-    if (req.session && req.session.authenticated) {
-        // El usuario está autenticado, permite que continúe
-        console.log("El ususario esta autenticado");
-        return next();
-    } else {
-        // El usuario no está autenticado, redirige al inicio de sesión
-        console.log("El usuario no esta autenticado")
-        res.redirect('/login.html');
-    }
-}
-*/
-
 
 // Configurar una ruta estática para servir archivos CSS y otros archivos estáticos
 // __dirname se refiere a la ubicación actual del archivo JS
 app.use(express.static(__dirname));
+
+//Ruta para servir archivos estáticos desde un directorio diferente
+// Configura una ruta estática para servir archivos CSS y recursos para la página "index.html"
+app.use('/index-static', express.static(path.join(__dirname, '..', 'Aplicación', 'aplicacion_web', 'ListaDeTareas')));
 
 
 //Ruta para la página de logeo
@@ -107,9 +98,9 @@ app.post('/inicio_sesion', (req, res) => {
         } else if (results.length === 0) {
             // Usuario no encontrado
             console.log(req.session.authenticated);
-            res.json({ authenticated: false });
+            res.status(500).send('Contraseña o usuario incorrectos, por favor, intentalo de nuevo: <a href="/login.html">aquí</a>.');
         } else {
-            // Comparar la contraseña ingresada con la contraseña almacenada
+            // El usuario fue encontrado, se porcede a comparar la contraseña ingresada con la contraseña almacenada
             const storedHash = results[0].password;
             bcrypt.compare(password, storedHash, (err, match) => {
                 if (err) {
@@ -119,13 +110,14 @@ app.post('/inicio_sesion', (req, res) => {
                     // Las contraseñas coinciden, autenticación exitosa
                     console.log("las contraseñas coincidieron")
                     req.session.authenticated = true;
-                    res.redirect('/holamundo.html');
-                    console.log(req.session.authenticated);
+                    req.session.username = username;
+                    res.redirect('/index.html');
+                    console.log(req.session.authenticated, username);
                 } else {
                     // Las contraseñas no coinciden
                     console.log("las contraseñas no coincidieron")
                     req.session.authenticated = false;
-                    res.json({ authenticated: false });
+                    res.status(500).send('Contraseña o usuario incorrectos, por favor, intentalo de nuevo: <a href="/login.html">aquí</a>.');
                     console.log(req.session.authenticated);
                 }
             });
@@ -134,11 +126,12 @@ app.post('/inicio_sesion', (req, res) => {
 });
    
 //Ruta Protegida
-app.get('/holamundo.html',(req,res) => {
+app.get('/index.html',(req,res) => {
     if(req.session && req.session.authenticated){
          //solo usuarios autenticados pueden acceder
         console.log("Acceso a la página protegida");
-        res.sendFile(__dirname + '/holamundo.html');
+        const indexPath = path.join(__dirname, '..','Aplicación','aplicacion_web', 'ListaDeTareas','index.html');
+        res.sendFile(indexPath);
     } else {
         //usuario no autenticado
         console.log("El usuario no está autenticado");
@@ -160,10 +153,21 @@ app.get('/cerrar_sesion', (req, res) => {
         }
     });
 });
-        
+    
+//Ruta para obtener el nombre de usuario
+app.get('/api/username', (req, res) => {
+    if (req.session && req.session.authenticated) {
+        // El usuario está autenticado, devuelve el nombre de usuario
+        res.json({ username: req.session.username });
+    } else {
+        // El usuario no está autenticado, devuelve un valor nulo u otro indicador
+        res.json({ username: null });
+    }
+});
+
 
 // Puerto de escucha
-const PORT = 3005;
+const PORT = 3006;
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
