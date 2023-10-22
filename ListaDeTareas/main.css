@@ -3,21 +3,25 @@
 	--primary: #3bc48f;
 	--business: #3a82ee;
 	--personal: var(--primary);
-    --school: #f9a01b; 
-    --miscelanea: #d883ff; 
+    --school: #f9a01b; /* Color anaranjado como ejemplo, puedes cambiarlo por el color que desees */
+    --miscelanea: #d883ff; /* Color morado como ejemplo */
     --light: #EEE;
 	--grey: #888;
 	--dark: #313154;
 	--danger: #ff5b57;
 
+   
+   
 	--shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
 	--business-glow: 0px 0px 4px rgba(58, 130, 238, 0.75);
 	--personal-glow: 0px 0px 4px rgba(128, 255, 170, 0.75);
-    --miscelanea-glow: 0px 0px 4px rgba(216, 131, 255, 0.75); 
-    --school-glow: 0px 0px 4px rgba(249, 160, 27, 0.75); 
+    --miscelanea-glow: 0px 0px 4px rgba(216, 131, 255, 0.75); /* Resplandor morado para concordar con el color anterior */
+
+
+    --school-glow: 0px 0px 4px rgba(249, 160, 27, 0.75); /* Resplandor anaranjado para concordar con el color anterior */
 }
-/* Fin de las Variables */
+/* End of Variables */
 
 /* Resets */
 * {
@@ -34,7 +38,7 @@ input:not([type="radio"]):not([type="checkbox"]), button {
 	background: none;
 	cursor: initial;
 }
-/* Fin de los Resets */
+/* End of Resets */
 
 body {
 	background: var(--light);
@@ -62,6 +66,27 @@ h4 {
 	margin-bottom: 0.5rem;
 }
 
+
+.greeting {
+    position: relative; /* Esto permitirá que el botón de logout se posicione en relación a este contenedor */
+}
+
+.logout-btn {
+    position: absolute;
+    top: 0.5rem; /* Posicionamos el botón un poco hacia abajo desde la parte superior */
+    right: 0.5rem; /* Posicionamos el botón un poco hacia la izquierda desde la parte derecha */
+    background-color: var(--danger);
+    color: #FFF;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.logout-btn:hover {
+    opacity: 0.8;
+}
+
 .greeting .title {
 	display: flex;
 }
@@ -79,7 +104,8 @@ h4 {
 	font-weight: 700;
 }
 
-.create-todo input[type="text"] {
+.create-todo input[type="text"],
+.create-todo input[type="date"] {
 	display: block;
 	width: 100%;
 	font-size: 1.125rem;
@@ -90,6 +116,7 @@ h4 {
 	box-shadow: var(--shadow);
 	margin-bottom: 1.5rem;
 }
+
 
 .create-todo .options {
 	display: grid;
@@ -114,6 +141,7 @@ input[type="radio"],
 input[type="checkbox"] {
 	display: none;
 }
+
 
 .bubble {
 	display: flex;

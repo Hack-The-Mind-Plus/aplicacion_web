@@ -17,6 +17,7 @@ window.addEventListener('load', () => {
 		const todo = {
 			content: e.target.elements.content.value,
 			category: e.target.elements.category.value,
+			endDate: e.target.elements.endDate.value,
 			done: false,
 			createdAt: new Date().getTime()
 		}
@@ -62,13 +63,23 @@ function DisplayTodos () {
         } else if (todo.category == 'miscelanea') {
             span.classList.add('miscelanea');
         }
+
+		const logoutButton = document.getElementById('logoutButton');
+		logoutButton.addEventListener('click', function () {
+			window.location.href = '/cerrar_sesion';
+		});
+
+
         
 		content.classList.add('todo-content');
 		actions.classList.add('actions');
 		edit.classList.add('edit');
 		deleteButton.classList.add('delete');
 
-		content.innerHTML = `<input type="text" value="${todo.content}" readonly>`;
+		content.innerHTML = `
+			<input type="text" value="${todo.content}" readonly>
+			<span> (Fecha de término: ${new Date(todo.endDate).toLocaleDateString()})</span>
+		`;
 		edit.innerHTML = 'Editar';
 		deleteButton.innerHTML = 'Eliminar';
 
