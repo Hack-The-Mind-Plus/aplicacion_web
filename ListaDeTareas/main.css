@@ -3,27 +3,23 @@
 	--primary: #3bc48f;
 	--business: #3a82ee;
 	--personal: var(--primary);
-    --school: #f9a01b; /* Color anaranjado como ejemplo, puedes cambiarlo por el color que desees */
-    --miscelanea: #d883ff; /* Color morado como ejemplo */
+    --school: #f9a01b;
+    --miscelanea: #d883ff;
     --light: #EEE;
 	--grey: #888;
+	--light_grey: #bababa;
 	--dark: #313154;
 	--danger: #ff5b57;
-
-   
-   
 	--shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-
 	--business-glow: 0px 0px 4px rgba(58, 130, 238, 0.75);
 	--personal-glow: 0px 0px 4px rgba(128, 255, 170, 0.75);
-    --miscelanea-glow: 0px 0px 4px rgba(216, 131, 255, 0.75); /* Resplandor morado para concordar con el color anterior */
-
-
-    --school-glow: 0px 0px 4px rgba(249, 160, 27, 0.75); /* Resplandor anaranjado para concordar con el color anterior */
+    --miscelanea-glow: 0px 0px 4px rgba(216, 131, 255, 0.75);
+    --school-glow: 0px 0px 4px rgba(249, 160, 27, 0.75); 
 }
-/* End of Variables */
 
 /* Resets */
+
+
 * {
 	margin: 0;
 	padding: 0;
@@ -38,7 +34,6 @@ input:not([type="radio"]):not([type="checkbox"]), button {
 	background: none;
 	cursor: initial;
 }
-/* End of Resets */
 
 body {
 	background: var(--light);
@@ -68,13 +63,13 @@ h4 {
 
 
 .greeting {
-    position: relative; /* Esto permitirá que el botón de logout se posicione en relación a este contenedor */
+    position: relative; 
 }
 
 .logout-btn {
     position: absolute;
-    top: 0.5rem; /* Posicionamos el botón un poco hacia abajo desde la parte superior */
-    right: 0.5rem; /* Posicionamos el botón un poco hacia la izquierda desde la parte derecha */
+    top: 0.5rem; 
+    right: 0.5rem;
     background-color: var(--danger);
     color: #FFF;
     padding: 0.5rem 1rem;
@@ -104,8 +99,7 @@ h4 {
 	font-weight: 700;
 }
 
-.create-todo input[type="text"],
-.create-todo input[type="date"] {
+.create-todo input[type="text"] {
 	display: block;
 	width: 100%;
 	font-size: 1.125rem;
@@ -116,6 +110,21 @@ h4 {
 	box-shadow: var(--shadow);
 	margin-bottom: 1.5rem;
 }
+
+
+.create-todo input[type="date"] {
+	display: block;
+	width: 100%;
+	font-size: 1.125rem;
+	padding: 1rem 1.5rem;
+	color: var(--grey);
+	background-color: #FFF;
+	border-radius: 0.5rem;
+	box-shadow: var(--shadow);
+	margin-bottom: 1.5rem;
+}
+
+
 
 
 .create-todo .options {
@@ -284,6 +293,18 @@ input:checked ~ .bubble::after {
 }
 
 .todo-item.done .todo-content input {
-	text-decoration: line-through;
-	color: var(--grey);
+	/*text-decoration: line-through;*/
+	color: var(--primary);
 }
+
+.todo-item.expired .todo-content input {
+    text-decoration: line-through;
+    color: var(--danger);
+}
+
+.todo-item.expired .bubble, 
+.todo-item.expired .edit {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
