@@ -4,14 +4,25 @@ let todos = [];
 // ################# Peticiones al Endpoint #######################
 
 function fetchUserName() {
-    fetch('/ruta al endpoint de la api para usuario')
-        .then(data => {
-            const nameInput = document.querySelector('#name');
-            nameInput.value = data.username;
-        })
-        .catch(error => {
-            console.error('Error fetching user name:', error);
-        });
+    const usernameElement = document.querySelector('#username');
+    fetch('/api/username')
+    .then(response => response.json())
+    .then(data => {
+        const username = data.username;
+
+        if (username) {
+            // Si se obtiene un nombre de usuario, muéstralo en la página
+            usernameElement.textContent = username;
+        } else {
+            // Si no se obtiene un nombre de usuario:
+            // Redirigir al usuario a la página de inicio de sesión
+            window.location.href = '/login.html';
+        }
+    })
+    .catch(error => {
+        // Maneja cualquier error en la solicitud AJAX
+        console.error('Error al obtener el nombre de usuario:', error);
+    });
 }
 
 function fetchTodos() {
@@ -188,6 +199,6 @@ window.addEventListener('load', () => {
     });
 
     logoutButton.addEventListener('click', () => {
-        window.location.href = '/cerrar_sesion';
+        window.location.href = '../../../Back/cerrar_sesion';
     });
 });
