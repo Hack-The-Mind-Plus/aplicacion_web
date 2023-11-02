@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Lista de tareas</title>
+		<link rel="stylesheet" href="/index-static/main.css" />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,700;0,900;1,400&family=Montserrat:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+
+	</head>
+	<body>
+		<main class="app">
+			<section class="greeting">
+				<h2 class="title">
+					Hola!&nbsp;<span id="username"></span> 
+				</h2>
+				<button class="logout-btn" id="logoutButton">Salir</button>
+			</section>
+			
+			<section class="create-todo">
+				<h3>CREA UNA TAREA</h3>
+				<form id="new-todo-form" action="/api/crear_tarea" method="POST">
+					<h4>¿Que tarea tienes pendiente?</h4>
+					<input 
+						type="text" 
+						placeholder="ej. Conseguir Leche"
+						name="content"
+						id="content" />
+					
+					<h4>Fecha de termino</h4>
+					<input 
+						type="date"
+						name="endDate"
+						id="endDate" />
+
+					<h4>Escoge una categoría</h4>
+					<div class="options">
+						<label>
+							<input type="radio" name="category" id="category1" value="business" /> 
+							<span class="bubble business"></span>
+							<div>Laboral</div>
+						</label>
+						<label>
+							<input type="radio" name="category" id="category2" value="personal" />
+							<span class="bubble personal"></span>
+							<div>Personal</div>
+						</label>
+						<label>
+							<input type="radio" name="category" id="category3" value="school" />
+							<span class="bubble school"></span>
+							<div>Escolar</div>
+						</label>
+						<label>
+							<input type="radio" name="category" id="category4" value="miscelanea" />
+							<span class="bubble miscelanea"></span>
+							<div>Miscelanea</div>
+						</label>
+					</div>
+
+					<input type="submit" value="Agregar tarea" />
+				</form>
+			</section>
+
+			<section class="todo-list">
+				<h3>LISTA DE TAREAS</h3>
+				<div class="list" id="todo-list"></div>
+			</section>
+
+
+		</main>
+
+		<script src="/index-static/main.js"></script>
+
+	</body>
+</html>
