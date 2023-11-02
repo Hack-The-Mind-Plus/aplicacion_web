@@ -1,6 +1,7 @@
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 require('dotenv').config();
+const mysql = require('mysql2');
 
 const dbConnection = {
     host: process.env.HOST, 
@@ -10,40 +11,31 @@ const dbConnection = {
     database: process.env.DATABASE
 }
 
-const sessionStore = new MySQLStore(dbConnection); //se crea un almacenamiento de sesiones en la BD
+
 
 module.exports = session({
     secret: process.env.SECRET, //gitignore
     resave: false,
     saveUninitialized: false,
-    store: sessionStore,
+    store: new MySQLStore({ ...dbConnection, useUniqueIDs: true, stringify: true}), //se crea un almacenamiento de sesiones en la BD
     cookie: {
         secure: false,
         maxAge: 1000*60*60,
     }
 });
 
-// Elimina automáticamente las sesiones caducadas de la base de datos.
-async function deleteExpiredSessions() {
-    // Obtiene todas las sesiones de la base de datos.
-    const sessions = await sessionStore.all();
+const sessionStore = new MySQLStore({ ...dbConnection, useUniqueIDs: true, stringify: true});
   
-    // Itera sobre las sesiones y elimina las que estén caducadas.
-    for (const session of sessions) {
-      if (session.expires < new Date()) {
-        await sessionStore.destroy(session.id);
-      }
-    }
-  }
-  
-  // Elimina las sesiones caducadas cada 10 minutos.
-  setInterval(deleteExpiredSessions, 30 * 60 * 1000);
+
+// Ejecuta la función `clearExpiredSessions()` cada minuto.
+setInterval(() => {
+  console.log("se destruyeron las sesiones expiradas");
+  sessionStore.clearExpiredSessions();
+}, 60 * 60 * 1000);
+
 
 // Optionally use onReady() to get a promise that resolves when store is ready.
-sessionStore.onReady().then(() => {
+sessionStore.onReady().then(async () => {
 	// MySQL session store ready for use.
 	console.log('MySQLStore ready');
-}).catch(error => {
-	// Something went wrong.
-	console.error(error);
 });

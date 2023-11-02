@@ -18,4 +18,25 @@ connection.connect((error) => {
     }
 });
 
+// Función para obtener el userId desde la base de datos
+function obtenerUserId(username, callback) {
+    console.log('Obteniendo userId para el usuario:', username);
+    connection.query('SELECT id_user FROM Usuarios WHERE user_name = ?', [username], (error, results) => {
+        if (error) {
+            console.error('Error al obtener el userId:', error);
+            callback(error, null);
+        } else if (results.length > 0) {
+            const userId = results[0].id_user; // Asegúrate de que la columna sea 'id_user'
+            console.log('UserId obtenido:', userId);
+            callback(null, userId);
+        } else {
+            console.log('Usuario no encontrado para:', username);
+            callback(null, null);
+        }
+    });
+}
+
+
 module.exports = connection;
+module.exports.obtenerUserId = obtenerUserId;
+    
