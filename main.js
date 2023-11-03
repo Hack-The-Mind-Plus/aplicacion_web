@@ -5,9 +5,9 @@ function convertDateToDatetime(date) {
     return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
   }
 
-function convertDoneToVarchar(done) {
+/*function convertDoneToVarchar(done) {
   return done ? 'true' : 'false';
-}
+}*/
 // ################# Peticiones al Endpoint #######################
 
 function fetchUserName() {
@@ -172,6 +172,7 @@ function DisplayTodos() {
     const todoList = document.querySelector('#todo-list');
     todoList.innerHTML = "";
 
+
     if (Array.isArray(todos)) {
         // Verifica si `todos` es un array
         todos.forEach(todo => {
@@ -201,26 +202,26 @@ window.addEventListener('load', () => {
 
     newTodoForm.addEventListener('submit', e => {
         e.preventDefault();
-
+    
         const inputEndDate = e.target.elements.endDate.value; // Supongo que inputEndDate es una cadena en formato "YYYY-MM-DD"
         const currentDateTime = new Date();
         const formattedCurrentDateTime = currentDateTime.toISOString().slice(0, 19).replace('T', ' ');
-
+    
         const todo = {
             content: e.target.elements.content.value,
             category: e.target.elements.category.value,
-            endDate: `${inputEndDate}T00:00:00`, // Agrega la hora y los minutos necesarios
+            endDate: convertDateToDatetime(inputEndDate),
             done: false,
-            createdAt: currentDateTime.toISOString().slice(0, 19).replace('T', ' ')
+            createdAt: formattedCurrentDateTime
         };
-
-         // Verificar si los datos se obtienen correctamente
+    
+        // Verificar si los datos se obtienen correctamente
         console.log('Contenido:', todo.content);
         console.log('Categoría:', todo.category);
         console.log('Fecha de término:', todo.endDate);
         console.log('hecho:',todo.done);
         console.log('fecha de inicio', todo.createdAt);
-
+    
         saveTodoToServer(todo);
         e.target.reset();
     });
