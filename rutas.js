@@ -12,7 +12,7 @@ const saltRounds = 10;
 
 // Middleware para analizar y acceder a los datos del formulario HTML.
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.json());
 // Configuración de express-sessión
 app.use(sessionMiddleware);
 
@@ -180,48 +180,6 @@ app.get('/api/username', (req, res) => {
     }
 });
 
-// Ruta post para crear una tarea
-/*app.post('/api/crear_tarea', sessionMiddleware, (req, res) => {
-    console.log('Solicitud POST para crear tarea recibida'); // Agregar esta línea al inicio
-    const { category, content, done, endDate } = req.body;
-    const userId = req.session.userId; // Asumiendo que has almacenado el ID del usuario en la sesión
-  
-    // Verifica que los datos requeridos se hayan introducido correctamente
-    if (!content || !category || !endDate || !userId) {
-      // Agregar impresiones en la consola para ayudar en la depuración
-      console.log('Datos recibidos en la solicitud POST:', req.body);
-      console.log('content:', content);
-      console.log('category:', category);
-      console.log('endDate:', endDate);
-      console.log('done:', done);
-      console.log('userId:', userId);
-      return res.status(400).json({ error: 'Faltan datos obligatorios' });
-    }
-  
-    // Crea una nueva tarea
-    const nuevaTarea = {
-      userId, // Asigna el ID del usuario a la tarea
-      content,
-      createdAt: new Date(), // Fecha actual
-      endDate,
-      category,
-      done: convertDoneToVarchar(done) // Convierte el valor booleano en "true" o "false"
-    };
-  
-    // Inserta la tarea en la base de datos
-    const query = 'INSERT INTO Tareas (id_user, description, fecha_creacion, fecha_vencimiento, estado, categoria) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [nuevaTarea.userId, nuevaTarea.content, nuevaTarea.createdAt, nuevaTarea.endDate, nuevaTarea.done, nuevaTarea.category];
-  
-    connection.query(query, values, (error, results) => {
-      if (error) {
-        console.error('Error al insertar la tarea:', error);
-        return res.status(500).json({ error: 'No se pudo crear la tarea' });
-      }
-  
-      nuevaTarea.id = results.insertId;
-      return res.status(201).json(nuevaTarea);
-    });
-  });*/
 
 //Ruta para obtener las peticiones de las tareas
 app.use('/api', tareas);

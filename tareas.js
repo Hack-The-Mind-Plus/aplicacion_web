@@ -7,7 +7,7 @@ const connection = require('./conexion'); // Importa la conexión a la base de d
 
 
 //Ruta post para crear una tarea
-router.post('/crear_tarea', sessionMiddleware, async (req, res) => {
+router.post('/crear_tarea', sessionMiddleware,  (req, res) => {
   console.log('Solicitud POST para crear tarea recibida'); // Agregar esta línea al inicio
   const { category, content, done, endDate} = req.body;
   const userId = req.session.userId; // Asumiendo que has almacenado el ID del usuario en la sesión
@@ -38,15 +38,17 @@ router.post('/crear_tarea', sessionMiddleware, async (req, res) => {
   const query = 'INSERT INTO Tareas (id_user, description,fecha_creacion, fecha_vencimiento, estado, categoria) VALUES (?, ?, ?, ?, ?, ?)';
   const values = [nuevaTarea.userId, nuevaTarea.content,nuevaTarea.createdAt, nuevaTarea.endDate, nuevaTarea.done, nuevaTarea.category];
 
-  try {
-    const results = await connection.query(query, values);
+  connection.query(query, values, (error, results) => {
+    if (error) {
+      console.error('Error al insertar la tarea:', error);
+      return res.status(500).json({ error: 'No se pudo crear la tarea' });
+    }
+
     nuevaTarea.id = results.insertId;
-    return res.status(200).json({ tarea: nuevaTarea });
-  } catch (error) {
-    return res.status(500).json({ error: 'No se pudo crear la tarea' });
-  }
-  console.log('Datos recibidos en la solicitud POST:', req.body); // Agregar esta línea al 
+    return res.status(201).json(nuevaTarea);
+  });
 });
+
 
   
 
