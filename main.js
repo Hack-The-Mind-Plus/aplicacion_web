@@ -5,9 +5,14 @@ function convertDateToDatetime(date) {
     return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
   }
 
-/*function convertDoneToVarchar(done) {
-  return done ? 'true' : 'false';
-}*/
+function convertDatetimeToDate(datetime) {
+    const dateObject = new Date(datetime);
+    const year = dateObject.getFullYear();
+    const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
+    const day = dateObject.getDate().toString().padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+}
 // ################# Peticiones al Endpoint #######################
 
 function fetchUserName() {
@@ -36,7 +41,14 @@ function fetchTodos() {
     fetch('/api/obtener_tareas')
         .then(response => response.json())
         .then(data => {
-            todos = data;
+            todos = data.map(item => ({
+                content: item.description,
+                endDate: convertDatetimeToDate(item.fecha_vencimiento),
+                done: item.estado === "1", // Convierte a boolean (si "estado" es "1", done es true)
+                category: item.categoria,
+                // ... otras propiedades si las tienes
+            }));
+            console.log("datos devueltos:",todos);
             DisplayTodos();
         })
         .catch(error => {
@@ -178,6 +190,7 @@ function DisplayTodos() {
         todos.forEach(todo => {
             const todoElement = createTodoElement(todo);
             todoList.appendChild(todoElement);
+            console.log("lista:", todoElement);
         });
     } else {
         todos=[];
