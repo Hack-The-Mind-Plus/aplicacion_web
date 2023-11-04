@@ -59,7 +59,7 @@ router.post('/crear_tarea', sessionMiddleware,  (req, res) => {
     // A continuación, debes realizar una consulta a la base de datos para obtener las tareas del usuario con el userId.
     // Puedes usar la variable userId para filtrar las tareas del usuario.
   
-    const query = 'SELECT * FROM Tareas WHERE id_user = ?';
+    const query = 'SELECT description, fecha_creacion, fecha_vencimiento, estado, categoria FROM Tareas WHERE id_user = ?';
     const values = [userId];
   
     connection.query(query, values, (error, results) => {
@@ -74,6 +74,7 @@ router.post('/crear_tarea', sessionMiddleware,  (req, res) => {
 
       // Los resultados de la consulta deben ser enviados como respuesta en formato JSON.
       res.json(results);
+      console.log("resultados:", results);
   });
 });
 
