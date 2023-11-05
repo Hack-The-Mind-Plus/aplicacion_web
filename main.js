@@ -1,5 +1,6 @@
 // Variables Globales
 let todos = [];
+
 //funciones para los tipos de datos.
 function convertDateToDatetime(date) {
     return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
@@ -42,6 +43,7 @@ function fetchTodos() {
         .then(response => response.json())
         .then(data => {
             todos = data.map(item => ({
+                id: item.id_tarea,
                 content: item.description,
                 endDate: convertDatetimeToDate(item.fecha_vencimiento),
                 done: item.estado === "1", // Convierte a boolean (si "estado" es "1", done es true)
@@ -78,13 +80,95 @@ function saveTodoToServer(todo) {
     })
     .then(data => {
         console.log('Tarea creada en el servidor:', data);
+
+        // Agregar la tarea a la lista local
         todos.push(data);
-        DisplayTodos();
+
+        // Crear el elemento de la tarea en la interfaz
+        const todoElement = createTodoElement(data);
+
+        // Agregar el elemento de la tarea a la lista en la interfaz
+        const todoList = document.querySelector('#todo-list');
+        todoList.appendChild(todoElement);
+
+        // Formatear la fecha en el elemento de la tarea
+        const endDateElement = todoElement.querySelector('.todo-content span');
+        endDateElement.textContent = `(Fecha de término: ${convertDatetimeToDate(data.endDate)})`;
     })
     .catch(error => {
         console.error('Error saving todo:', error);
     });
 }
+
+function updateTodoStatus(content, done) {
+    const requestData = { content, done };
+
+    fetch('/api/actualizar_estado_tarea', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => {
+        if (response.status === 200) {
+            // El estado de la tarea se actualizó correctamente en la base de datos
+        } else {
+            // Hubo un error al actualizar el estado de la tarea
+            throw new Error(response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error updating todo status:', error);
+    });
+}
+
+function saveEditarTarea(todo) {
+    // Realiza una solicitud al servidor para actualizar la tarea
+    fetch(`/api/editar_tarea/${todo.id}`, {
+        method: 'PUT', // Utiliza el método PUT para actualizar
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(todo)
+    })
+    .then(response => {
+        if (response.status === 200) {
+            // Los cambios se guardaron correctamente en el servidor
+            console.log('Tarea actualizada en el servidor:', todo);
+            // Actualiza la tarea en la interfaz de usuario
+            DisplayTodos();
+        } else {
+            // Hubo un error al actualizar la tarea
+            console.error('Error al actualizar la tarea:', response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error al guardar la tarea:', error);
+    });
+}
+
+function deleteTarea(todo) {
+    return fetch(`/api/eliminar_tarea/${todo.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        if (response.status === 200) {
+          // La tarea se eliminó correctamente en el servidor
+          console.log('Tarea eliminada en el servidor:', todo);
+        } else {
+          // Hubo un error al eliminar la tarea
+          console.error('Error al eliminar la tarea:', response.statusText);
+        }
+      })
+      .catch(error => {
+        console.error('Error al eliminar la tarea:', error);
+      });
+  }
+
 
   
 
@@ -110,6 +194,8 @@ function createTodoElement(todo) {
     actions.classList.add('actions');
     edit.classList.add('edit');
     deleteButton.classList.add('delete');
+
+
 
     content.innerHTML = `
         <input type="text" value="${todo.content}" readonly>
@@ -164,21 +250,39 @@ function handleTodoEditClick(event) {
 
     input.removeAttribute('readonly');
     input.focus();
-    input.addEventListener('blur', () => {
-        input.setAttribute('readonly', true);
+
+    editButton.addEventListener('click', () => {
         todo.content = input.value;
-        DisplayTodos();
+        input.setAttribute('readonly', true);
+        
+        // Asegúrate de que el ID de la tarea esté presente en el objeto todo
+        // Puedes utilizarlo para identificar la tarea que se está editando
+        saveEditarTarea(todo);
     });
-}
+} 
+
+
 
 function handleTodoDeleteClick(event) {
     const deleteButton = event.target;
     const todoItem = deleteButton.closest('.todo-item');
     const todoContent = todoItem.querySelector('input[type="text"]').value;
-
-    todos = todos.filter(t => t.content !== todoContent);
-    DisplayTodos();
-}
+  
+    const todo = todos.find(t => t.content === todoContent);
+  
+    if (!todo) {
+      console.error('No se encontró la tarea para eliminar');
+      return;
+    }
+  
+    // Realiza la solicitud al servidor para eliminar la tarea
+    deleteTarea(todo)
+      .then(() => {
+        // La tarea se eliminó en el servidor, ahora actualiza la lista local y la interfaz de usuario
+        todos = todos.filter(t => t.id !== todo.id); // Elimina la tarea de la lista local
+        DisplayTodos();
+      });
+  }
 
 function DisplayTodos() {
     const todoList = document.querySelector('#todo-list');
@@ -241,12 +345,22 @@ window.addEventListener('load', () => {
 
     todoList.addEventListener('change', event => {
         if (event.target.matches('input[type="checkbox"]')) {
-            handleTodoCheckboxChange(event);
+            const checkbox = event.target;
+            const todoItem = checkbox.closest('.todo-item');
+            const todo = todos.find(t => t.content === todoItem.querySelector('input[type="text"]').value);
+    
+            todo.done = checkbox.checked;
+            if (todo.done) {
+                todoItem.classList.add('done');
+            } else {
+                todoItem.classList.remove('done');
+            }
+            updateTodoStatus(todo.content, todo.done);
         }
     });
 
     todoList.addEventListener('click', event => {
-        if (event.target.matches('.edit')) {
+        if (event.target.matches('.edit') || event.target.matches('.save')) {
             handleTodoEditClick(event);
         } else if (event.target.matches('.delete')) {
             handleTodoDeleteClick(event);
