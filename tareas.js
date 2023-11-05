@@ -56,10 +56,10 @@ router.post('/crear_tarea', sessionMiddleware,  (req, res) => {
   router.get('/obtener_tareas', sessionMiddleware, (req, res) => {
     const userId = req.session.userId; // Asumiendo que has almacenado el ID del usuario en la sesión
   
-    // A continuación, debes realizar una consulta a la base de datos para obtener las tareas del usuario con el userId.
-    // Puedes usar la variable userId para filtrar las tareas del usuario.
+    //Consulta a la base de datos para obtener las tareas del usuario con el userId.
+    //La variable userId se usa para filtrar las tareas del usuario.
   
-    const query = 'SELECT description, fecha_creacion, fecha_vencimiento, estado, categoria FROM Tareas WHERE id_user = ?';
+    const query = 'SELECT id_tarea, description, fecha_creacion, fecha_vencimiento, estado, categoria FROM Tareas WHERE id_user = ?';
     const values = [userId];
   
     connection.query(query, values, (error, results) => {
@@ -75,6 +75,65 @@ router.post('/crear_tarea', sessionMiddleware,  (req, res) => {
       // Los resultados de la consulta deben ser enviados como respuesta en formato JSON.
       res.json(results);
       console.log("resultados:", results);
+  });
+});
+
+//Ruta para actualizar el estado de la tarea.
+router.post('/actualizar_estado_tarea', sessionMiddleware, (req, res) => {
+  const { content, done } = req.body;
+  const userId = req.session.userId; // Asumiendo que has almacenado el ID del usuario en la sesión
+
+  // Actualiza el estado de la tarea en la base de datos
+  const query = 'UPDATE Tareas SET estado = ? WHERE id_user = ? AND description = ?';
+  const values = [done ? '1' : '0', userId, content]; // Convierte el valor booleano a '1' (completado) o '0' (pendiente)
+
+  connection.query(query, values, (error) => {
+      if (error) {
+          console.error('Error updating todo status:', error);
+          return res.status(500).json({ error: 'No se pudo actualizar el estado de la tarea' });
+      }
+
+      return res.status(200).json({ message: 'Estado de tarea actualizado correctamente' });
+  });
+});
+
+// Ruta para actualizar una tarea existente
+router.put('/editar_tarea/:taskId', sessionMiddleware, (req, res) => {
+  const taskId = req.params.taskId; // Obtén el ID de la tarea desde la URL
+  const { content } = req.body; // Obtén el nuevo contenido de la tarea desde el cuerpo de la solicitud
+
+  // Realiza la actualización en la base de datos, por ejemplo:
+  const query = 'UPDATE Tareas SET description = ? WHERE id_tarea = ?';
+  const values = [content, taskId];
+
+  connection.query(query, values, (error, results) => {
+      if (error) {
+          console.error('Error al actualizar la tarea:', error);
+          return res.status(500).json({ error: 'No se pudo actualizar la tarea' });
+      }
+
+      // La tarea se actualizó correctamente
+      res.status(200).json({ message: 'Tarea actualizada con éxito' });
+  });
+});
+
+// Ruta para eliminar una tarea
+router.delete('/eliminar_tarea/:taskId', sessionMiddleware, (req, res) => {
+  const taskId = req.params.taskId; // Obtén el ID de la tarea desde la URL
+  const userId = req.session.userId; // Asumiendo que has almacenado el ID del usuario en la sesión
+
+  // Realiza la eliminación en la base de datos
+  const query = 'DELETE FROM Tareas WHERE id_tarea = ? AND id_user = ?';
+  const values = [taskId, userId];
+
+  connection.query(query, values, (error, results) => {
+    if (error) {
+      console.error('Error al eliminar la tarea:', error);
+      return res.status(500).json({ error: 'No se pudo eliminar la tarea' });
+    }
+
+    // La tarea se eliminó correctamente
+    res.status(200).json({ message: 'Tarea eliminada con éxito' });
   });
 });
 

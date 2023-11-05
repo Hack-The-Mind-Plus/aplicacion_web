@@ -12,6 +12,7 @@ const saltRounds = 10;
 
 // Middleware para analizar y acceder a los datos del formulario HTML.
 app.use(express.urlencoded({ extended: true }));
+//Acceder a objetos JSON
 app.use(express.json());
 // Configuración de express-sessión
 app.use(sessionMiddleware);
