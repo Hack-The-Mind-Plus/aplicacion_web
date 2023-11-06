@@ -59,9 +59,10 @@ function fetchTodos() {
 }
 
 function saveTodoToServer(todo) {
-    const { content, category, endDate, done } = todo; // Extraer solo los campos necesarios
+    const { content, category, endDate, done } = todo; 
     const requestData = { content, category, endDate, done };
-    console.log('Datos a enviar al servidor:', requestData); // Agregar esta línea
+
+    console.log('Datos a enviar al servidor:', requestData); 
      fetch('/api/crear_tarea', {
         method: 'POST',
         headers: {
@@ -320,13 +321,22 @@ window.addEventListener('load', () => {
     newTodoForm.addEventListener('submit', e => {
         e.preventDefault();
     
-        const inputEndDate = e.target.elements.endDate.value; // Supongo que inputEndDate es una cadena en formato "YYYY-MM-DD"
+        const content = e.target.elements.content.value;
+        const category = e.target.elements.category.value;
+        const inputEndDate = e.target.elements.endDate.value;
+    
+        // Verifica si alguno de los campos obligatorios está vacío
+        if (!content || !category || !inputEndDate) {
+            alert('Por favor, complete todos los campos obligatorios.');
+            return;
+        }
+    
         const currentDateTime = new Date();
         const formattedCurrentDateTime = currentDateTime.toISOString().slice(0, 19).replace('T', ' ');
     
         const todo = {
-            content: e.target.elements.content.value,
-            category: e.target.elements.category.value,
+            content,
+            category,
             endDate: convertDateToDatetime(inputEndDate),
             done: false,
             createdAt: formattedCurrentDateTime
