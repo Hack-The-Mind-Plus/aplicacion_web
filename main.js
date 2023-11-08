@@ -1,7 +1,5 @@
-// Variables Globales
 let todos = [];
 
-//funciones para los tipos de datos.
 function convertDateToDatetime(date) {
     return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
   }
@@ -14,7 +12,6 @@ function convertDatetimeToDate(datetime) {
     
     return `${year}-${month}-${day}`;
 }
-// ################# Peticiones al Endpoint #######################
 
 function fetchUserName() {
     const usernameElement = document.querySelector('#username');
@@ -24,16 +21,12 @@ function fetchUserName() {
         const username = data.username;
 
         if (username) {
-            // Si se obtiene un nombre de usuario, muéstralo en la página
             usernameElement.textContent = username;
         } else {
-            // Si no se obtiene un nombre de usuario:
-            // Redirigir al usuario a la página de inicio de sesión
             window.location.href = '/login.html';
         }
     })
     .catch(error => {
-        // Maneja cualquier error en la solicitud AJAX
         console.error('Error al obtener el nombre de usuario:', error);
     });
 }
@@ -46,11 +39,10 @@ function fetchTodos() {
                 id: item.id_tarea,
                 content: item.description,
                 endDate: convertDatetimeToDate(item.fecha_vencimiento),
-                done: item.estado === "1", // Convierte a boolean (si "estado" es "1", done es true)
+                done: item.estado === "1", 
                 category: item.categoria,
-                // ... otras propiedades si las tienes
+               
             }));
-            console.log("datos devueltos:",todos);
             DisplayTodos();
         })
         .catch(error => {
@@ -72,27 +64,20 @@ function saveTodoToServer(todo) {
     })
     .then(response => {
         if (response.status === 201) {
-            // La tarea se creó correctamente
             return response.json();
         } else {
-            // Hubo un error al crear la tarea
             throw new Error(response.statusText);
         }
     })
     .then(data => {
-        console.log('Tarea creada en el servidor:', data);
 
-        // Agregar la tarea a la lista local
         todos.push(data);
 
-        // Crear el elemento de la tarea en la interfaz
         const todoElement = createTodoElement(data);
 
-        // Agregar el elemento de la tarea a la lista en la interfaz
         const todoList = document.querySelector('#todo-list');
         todoList.appendChild(todoElement);
 
-        // Formatear la fecha en el elemento de la tarea
         const endDateElement = todoElement.querySelector('.todo-content span');
         endDateElement.textContent = `(Fecha de término: ${convertDatetimeToDate(data.endDate)})`;
     })
@@ -113,9 +98,7 @@ function updateTodoStatus(content, done) {
     })
     .then(response => {
         if (response.status === 200) {
-            // El estado de la tarea se actualizó correctamente en la base de datos
         } else {
-            // Hubo un error al actualizar el estado de la tarea
             throw new Error(response.statusText);
         }
     })
@@ -125,9 +108,9 @@ function updateTodoStatus(content, done) {
 }
 
 function saveEditarTarea(todo) {
-    // Realiza una solicitud al servidor para actualizar la tarea
+    
     fetch(`/api/editar_tarea/${todo.id}`, {
-        method: 'PUT', // Utiliza el método PUT para actualizar
+        method: 'PUT', 
         headers: {
             'Content-Type': 'application/json'
         },
@@ -135,12 +118,8 @@ function saveEditarTarea(todo) {
     })
     .then(response => {
         if (response.status === 200) {
-            // Los cambios se guardaron correctamente en el servidor
-            console.log('Tarea actualizada en el servidor:', todo);
-            // Actualiza la tarea en la interfaz de usuario
             DisplayTodos();
         } else {
-            // Hubo un error al actualizar la tarea
             console.error('Error al actualizar la tarea:', response.statusText);
         }
     })
@@ -158,10 +137,7 @@ function deleteTarea(todo) {
     })
       .then(response => {
         if (response.status === 200) {
-          // La tarea se eliminó correctamente en el servidor
-          console.log('Tarea eliminada en el servidor:', todo);
         } else {
-          // Hubo un error al eliminar la tarea
           console.error('Error al eliminar la tarea:', response.statusText);
         }
       })
@@ -171,9 +147,6 @@ function deleteTarea(todo) {
   }
 
 
-  
-
-// ################# Fin de Peticiones al Endpoint #######################
 
 function createTodoElement(todo) {
     const todoItem = document.createElement('div');
@@ -239,8 +212,6 @@ function handleTodoCheckboxChange(event) {
     } else {
         todoItem.classList.remove('done');
     }
-
-    // Actualizar en servidor (Si se requiere)
 }
 
 function handleTodoEditClick(event) {
@@ -256,8 +227,6 @@ function handleTodoEditClick(event) {
         todo.content = input.value;
         input.setAttribute('readonly', true);
         
-        // Asegúrate de que el ID de la tarea esté presente en el objeto todo
-        // Puedes utilizarlo para identificar la tarea que se está editando
         saveEditarTarea(todo);
     });
 } 
@@ -276,11 +245,9 @@ function handleTodoDeleteClick(event) {
       return;
     }
   
-    // Realiza la solicitud al servidor para eliminar la tarea
     deleteTarea(todo)
       .then(() => {
-        // La tarea se eliminó en el servidor, ahora actualiza la lista local y la interfaz de usuario
-        todos = todos.filter(t => t.id !== todo.id); // Elimina la tarea de la lista local
+        todos = todos.filter(t => t.id !== todo.id); 
         DisplayTodos();
       });
   }
@@ -291,15 +258,12 @@ function DisplayTodos() {
 
 
     if (Array.isArray(todos)) {
-        // Verifica si `todos` es un array
         todos.forEach(todo => {
             const todoElement = createTodoElement(todo);
             todoList.appendChild(todoElement);
-            console.log("lista:", todoElement);
         });
     } else {
         todos=[];
-        // Si `todos` no es un array, no hay tareas para mostrar
         const message = document.createElement('p');
         message.textContent = 'No hay tareas para mostrar.';
         todoList.appendChild(message);
@@ -325,7 +289,6 @@ window.addEventListener('load', () => {
         const category = e.target.elements.category.value;
         const inputEndDate = e.target.elements.endDate.value;
     
-        // Verifica si alguno de los campos obligatorios está vacío
         if (!content || !category || !inputEndDate) {
             alert('Por favor, complete todos los campos obligatorios.');
             return;
@@ -342,12 +305,6 @@ window.addEventListener('load', () => {
             createdAt: formattedCurrentDateTime
         };
     
-        // Verificar si los datos se obtienen correctamente
-        console.log('Contenido:', todo.content);
-        console.log('Categoría:', todo.category);
-        console.log('Fecha de término:', todo.endDate);
-        console.log('hecho:',todo.done);
-        console.log('fecha de inicio', todo.createdAt);
     
         saveTodoToServer(todo);
         e.target.reset();
