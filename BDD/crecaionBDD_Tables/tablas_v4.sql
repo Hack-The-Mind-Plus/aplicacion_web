@@ -23,7 +23,7 @@ USE `apliacacion_web_bdd` ;
 CREATE TABLE IF NOT EXISTS `apliacacion_web_bdd`.`Usuarios` (
   `id_user` INT NOT NULL AUTO_INCREMENT,
   `user_name` VARCHAR(20) NOT NULL,
-  `password` VARCHAR(20) NOT NULL,
+  `password` VARCHAR(60) NOT NULL,
   PRIMARY KEY (`id_user`))
 ENGINE = InnoDB;
 
