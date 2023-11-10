@@ -41,7 +41,6 @@ function fetchTodos() {
                 endDate: convertDatetimeToDate(item.fecha_vencimiento),
                 done: item.estado === "1", 
                 category: item.categoria,
-               
             }));
             DisplayTodos();
         })
@@ -53,8 +52,6 @@ function fetchTodos() {
 function saveTodoToServer(todo) {
     const { content, category, endDate, done } = todo; 
     const requestData = { content, category, endDate, done };
-
-    console.log('Datos a enviar al servidor:', requestData); 
      fetch('/api/crear_tarea', {
         method: 'POST',
         headers: {
@@ -226,7 +223,9 @@ function handleTodoEditClick(event) {
     editButton.addEventListener('click', () => {
         todo.content = input.value;
         input.setAttribute('readonly', true);
-        
+
+         const endDateElement = todoItem.querySelector('.todo-content span');
+         endDateElement.textContent = `(Fecha de término: ${convertDatetimeToDate(todo.endDate)})`;        
         saveEditarTarea(todo);
     });
 } 
@@ -248,6 +247,8 @@ function handleTodoDeleteClick(event) {
     deleteTarea(todo)
       .then(() => {
         todos = todos.filter(t => t.id !== todo.id); 
+        const endDateElement = todoItem.querySelector('.todo-content span');
+        endDateElement.textContent = `(Fecha de término: ${convertDatetimeToDate(todo.endDate)})`; 
         DisplayTodos();
       });
   }
