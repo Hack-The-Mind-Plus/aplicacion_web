@@ -5,6 +5,7 @@ const connection = require('./conexion'); // Importar la conexión a la base de 
 const { obtenerUserId } = require('./conexion'); // Importa la fúncion de obtener el userid
 const path = require('path'); //Contruye rutas  hacia otros directorios
 const tareas = require('./tareas');
+const router = express.Router();
 
 const app = express();
 const saltRounds = 10;
@@ -16,6 +17,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Configuración de express-sessión
 app.use(sessionMiddleware);
+
+// Ruta para proteger los archivos de backend
+app.use(['/conexion.js', '/rutas.js','/session.js','/tareas.js', '/.env'], (req, res, next) => {
+    res.sendStatus(404); // Devuelve un estado "Forbidden" (403) si alguien intenta acceder a estas rutas
+});
 
 
 // Configurar una ruta estática para servir archivos CSS y otros archivos estáticos
@@ -141,7 +147,7 @@ app.post('/inicio_sesion', (req, res) => {
     });
 });
    
-//Ruta Protegida
+//Rutas Protegida
 app.get('/index.html',(req,res) => {
     if(req.session && req.session.authenticated){
          //solo usuarios autenticados pueden acceder
@@ -155,6 +161,7 @@ app.get('/index.html',(req,res) => {
     }
    
 });
+
 
 // Ruta para cerrar la sesión
 app.get('/cerrar_sesion', (req, res) => {
@@ -186,6 +193,10 @@ app.get('/api/username', (req, res) => {
 app.use('/api', tareas);
 
 
+// Manejador de errores 404
+app.use((req, res, next) => {
+    res.status(404).send('Not Found: 404');
+  });
 
 // Puerto de escucha
 const PORT = 3006;
