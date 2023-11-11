@@ -2,22 +2,30 @@ const mysql = require('mysql2');
 require('dotenv').config();
 
 // Configuración de la conexión a la base de datos
-const connection = mysql.createConnection({
+const connection = mysql.createPool({
     host: process.env.HOST, 
     user: process.env.USER,              
     password: process.env.PASSWORD,           
     database: process.env.DATABASE,
-    port: 20175       
+    port: 20175,
+    connectionLimit: 15       
 });
 
-// Conectar a la base de datos
-connection.connect((error) => {
-    if (error) {
-        console.error('Error en la conexión a la base de datos:', error);
+connection.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error en la conexión a la base de datos:', err);
+      res.status(500).send('Lo siento, no se pudo establecer una conexión con la base de datos en este momento. Por favor, inténtalo de nuevo más tarde.');
     } else {
-        console.log('Conexión exitosa a la base de datos MySQL');
+      console.log('Conexión exitosa a la base de datos MySQL');
     }
-});
+  });
+  
+  // Establecer un temporizador de 20 segundos
+  connectionTimeout = setTimeout(() => {
+      console.error('No se pudo establecer una conexión con la base de datos después de 20 segundos');
+      // Enviar mensaje de error al usuario
+      res.status(500).send('Lo siento, no se pudo establecer una conexión con la base de datos en este momento. Por favor, inténtalo de nuevo más tarde.');
+    }, 20000);
 
 // Función para obtener el userId desde la base de datos
 function obtenerUserId(username, callback) {
