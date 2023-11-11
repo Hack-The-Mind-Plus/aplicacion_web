@@ -13,6 +13,21 @@ function convertDatetimeToDate(datetime) {
     return `${year}-${month}-${day}`;
 }
 
+function updateEndDateElement(todoItem, todo) {
+    const endDateElement = todoItem.querySelector('.todo-content span');
+    endDateElement.textContent = `(Fecha de término: ${convertDatetimeToDate(todo.endDate)})`;
+}
+
+function updateEndDateElements() {
+    const todoList = document.querySelector('#todo-list');
+    const todoItems = todoList.querySelectorAll('.todo-item');
+
+    todoItems.forEach((todoItem, index) => {
+        const todo = todos[index];
+        updateEndDateElement(todoItem, todo);
+    });
+}
+
 function fetchUserName() {
     const usernameElement = document.querySelector('#username');
     fetch('/api/username')
@@ -75,8 +90,7 @@ function saveTodoToServer(todo) {
         const todoList = document.querySelector('#todo-list');
         todoList.appendChild(todoElement);
 
-        const endDateElement = todoElement.querySelector('.todo-content span');
-        endDateElement.textContent = `(Fecha de término: ${convertDatetimeToDate(data.endDate)})`;
+        updateEndDateElement(todoElement, data);
     })
     .catch(error => {
         console.error('Error saving todo:', error);
@@ -247,8 +261,7 @@ function handleTodoDeleteClick(event) {
     deleteTarea(todo)
       .then(() => {
         todos = todos.filter(t => t.id !== todo.id); 
-        const endDateElement = todoItem.querySelector('.todo-content span');
-        endDateElement.textContent = `(Fecha de término: ${convertDatetimeToDate(todo.endDate)})`; 
+        todoItem.remove();
         DisplayTodos();
       });
   }
@@ -269,6 +282,7 @@ function DisplayTodos() {
         message.textContent = 'No hay tareas para mostrar.';
         todoList.appendChild(message);
     }
+    updateEndDateElements();
 }
 
 window.addEventListener('load', () => {
