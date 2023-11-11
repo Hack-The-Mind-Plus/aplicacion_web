@@ -11,6 +11,8 @@ const connection = mysql.createPool({
     connectionLimit: 15       
 });
 
+
+//manejo de error al fallar conexion
 connection.getConnection((err, connection) => {
     if (err) {
       console.error('Error en la conexión a la base de datos:', err);
@@ -20,13 +22,7 @@ connection.getConnection((err, connection) => {
     }
   });
   
-  // Establecer un temporizador de 20 segundos
-  connectionTimeout = setTimeout(() => {
-      console.error('No se pudo establecer una conexión con la base de datos después de 20 segundos');
-      // Enviar mensaje de error al usuario
-      res.status(500).send('Lo siento, no se pudo establecer una conexión con la base de datos en este momento. Por favor, inténtalo de nuevo más tarde.');
-    }, 20000);
-
+  
 // Función para obtener el userId desde la base de datos
 function obtenerUserId(username, callback) {
     console.log('Obteniendo userId para el usuario:', username);
