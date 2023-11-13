@@ -1,194 +1,130 @@
-body{
-     background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.9)), url('fondo.jpg');
-
-     background-size: cover;
-     background-repeat: no-repeat;
-     background-attachment: fixed;
-
-     
-  
-  font-family: 'Roboto', sans-serif;
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-image: url('fondo.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #000000;
 }
 
 header {
-    /*background-color: #00000080; /* Color de fondo similar al de Facebook */
-    color: white; /* Color del texto */
+    background-color: #333;
+    color: white;
     padding: 10px;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
+
+
+.main-header {
+    transition: visibility 0s, opacity 0.5s linear;
+}
+
+.main-header.hide-header {
+    visibility: hidden;
+    opacity: 0;
+}
+
+
+.logo img {
+    max-width: 70px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.marca {
     display: flex;
     align-items: center;
-      width: 1300px; /* Ajusta el ancho de la div según tus necesidades */
-  height: 100px; /* Ajusta la altura de la div según tus necesidades */
-  background: linear-gradient(to bottom, rgba(0, 0, 0.7, 0.7), rgba(0, 0, 0, 0.2));
-  /* El fondo es un degradado lineal que va desde transparente (rgba(0, 0, 0, 0)) en la parte superior hasta negro semitransparente (rgba(0, 0, 0, 0.7)) en la parte inferior. Puedes ajustar el valor 0.7 para controlar la opacidad. */
-  border-radius: 10px; /* Agrega un borde redondeado para difuminar los bordes. */
-
+    flex-direction: column; /* Añadido para que el texto se acomode en dos líneas */
 }
 
-/* Estilo para el logo */
-.logo img {
-    width: 70px; /* Tamaño del logo */
-    height: 70px; /* Tamaño del logo */
-    margin-right: 40px;
-}
-
-/* Estilo para la marca (nombre de la empresa) */
 .marca h1 {
-    font-size: 30px; /* Tamaño de fuente del nombre de la empresa */
+    font-size: 24px;
     margin: 0;
+    white-space: nowrap; /* Añadido para evitar que el texto se divida en dos líneas */
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Estilo para la descripción de la marca */
-.marca p {
-    font-size: 16px; /* Tamaño de fuente para la descripción */
-    margin: 0;
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin-top: 80px; /* Espacio adicional para el encabezado fijo */
+     position: relative;
+    z-index: 1; /* Ajusta según sea necesario, debe ser menor que el z-index del encabezado */
+}
+.container {
+    position: relative;
+    z-index: 1; /* Ajusta según sea necesario, debe ser menor que el z-index del encabezado */
+        margin-top: 170px; /* Ajusta según la altura de tu encabezado fijo */
+
 }
 
-/* Estilo para el enlace en el encabezado (si lo tienes) */
-header a {
-    color: white; /* Color del enlace */
-    text-decoration: none; /* Sin subrayado */
-    margin-left: 20px; /* Espaciado entre elementos */
-    font-weight: bold;
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 7; /* Ajusta según sea necesario, debe ser mayor que el z-index del contenedor */
 }
 
-/* Estilo para el enlace al pasar el cursor por encima */
-header a:hover {
-    text-decoration: underline; /* Subrayado al pasar el cursor por encima */
+.backbox {
+    background-color: #808080; /* Cambiado a gris */
+    width: 80%;
+    max-width: 400px;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 5px;
 }
 
-.container{
-  /*border:1px solid white;*/
-  width: 600px;
-  height: 350px;
-  position: absolute;
-  top:50%;
-  left:50%;
-  transform: translate(-50%, -50%);
-  display: inline-flex; 
-}
-.backbox{  
-  background-color: #404040;
-  width: 100%;
-  height: 80%;
-  position: absolute;
-  transform: translate(0,-50%);
-  top:50%;
-  display: inline-flex;
+.frontbox, .login, .signup {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 15px;
+    width: 80%;
+    max-width: 400px;
+    margin: 5px;
 }
 
-.frontbox{
-  background-color: white;
-  border-radius: 20px;
-  height: 100%;
-  width: 50%;
-  z-index: 10;
-  position: absolute;
-  right:0;
-  margin-right: 3%;
-  margin-left: 3%;
-  transition: right .8s ease-in-out;
+.textcontent {
+    text-align: center;
+    margin-top: 10px;
 }
 
-.moving{
-  right:45%;
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
-.loginMsg, .signupMsg{
-  width: 50%;
-  height: 100%;
-  font-size: 15px;
-  box-sizing: border-box;
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #35B729; /* Cambiado a verde */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
-.loginMsg .title,
-.signupMsg .title{
-  font-weight: 300;
-  font-size: 23px;
+button:hover {
+    background-color: #2A9045; /* Cambiado a un tono más oscuro de verde al pasar el cursor */
 }
 
-.loginMsg p,
-.signupMsg p {
-  font-weight: 100;
+.hide {
+    display: none;
 }
 
-.textcontent{
-  color:white;
-  margin-top:65px;
-  margin-left: 12%;
-}
-
-.loginMsg button,
-.signupMsg button {
-  background-color: #404040;
-  border: 2px solid white;
-  border-radius: 10px;
-  color:white;
-  font-size: 12px;
-  box-sizing: content-box;
-  font-weight: 300;
-  padding:10px;
-  margin-top: 20px;
-}
-
-/* front box content*/
-.login, .signup{
-  padding: 20px;
-  text-align: center;
-}
-
-.login h2,
-.signup h2 {
-  color: #35B729;
-  font-size:22px;
-}
-
-.inputbox{
-  margin-top:30px; 
-}
-.login input, 
-.signup input {
-  display: block;
-  width: 100%;
-  height: 40px;
-  background-color: #f2f2f2;
-  border: none;
-  margin-bottom:20px;
-  font-size: 12px;
-}
-
-.login button,
-.signup button{
-  background-color: #35B729;
-  border: none;
-  color:white;
-  font-size: 12px;
-  font-weight: 300;
-  box-sizing: content-box;
-  padding:10px;
-  border-radius: 10px;
-  width: 60px;
-  position: absolute;
-  right:30px;
-  bottom: 30px;
-  cursor: pointer;
-}
-
-/* Fade In & Out*/
-.login p {
-  cursor: pointer;
-  color:#404040;
-  font-size:15px;
-}
-
-.loginMsg, .signupMsg{
-  /*opacity: 1;*/
-  transition: opacity .8s ease-in-out;
-}
-
-.visibility{
-  opacity: 0;
-}
-
-.hide{
-  display: none;
+@media screen and (max-width: 600px) {
+    .logo img {
+        max-width: 50px;
+    }
 }
