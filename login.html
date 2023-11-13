@@ -9,67 +9,62 @@
     <title>Inicio de Sesión HackTheMind</title>
 </head>
 <body>
-  <header>
+    <header id="header" class="main-header">
         <div class="logo">
             <img src="cerebro2.png" alt="Logo de tu empresa">
         </div>
         <div class="marca">
             <h1>Hack the Mind</h1>
             <p>Organiza tus tareas</p>
-        
         </div>
     </header>
 
-    
+    <div class="container">
+        <div class="backbox">
+            <div class="loginMsg">
+                <div class="textcontent">
+                    <p class="title">¿Aun no tienes una cuenta?</p>
+                    <p>Regístrate para poder organizar tus tareas.</p>
+                    <button id="switch1">Regístrate</button>
+                </div>
+            </div>
+            <div class="signupMsg visibility">
+                <div class="textcontent">
+                    <p class="title">¿Ya tienes una cuenta?</p>
+                    <p>Ingresa para no descuidar tus tareas.</p>
+                    <button id="switch2">Iniciar sesión</button>
+                </div>
+            </div>
+        </div>
 
-  <div class="container">
-    <div class="backbox">
-      <div class="loginMsg">
-        <div class="textcontent">
-          <p class="title">¿Aun no tienes una cuenta?</p>
-          <p>Registrate para poder organizar tus tareas.</p>
-          <button id="switch1">Registrate</button>
+        <div class="frontbox login hide"> <!-- Agregado hide -->
+            <form action="/inicio_sesion" method="post">
+                <div class="login">
+                    <h2>INICIAR SESIÓN</h2>
+                    <div class="inputbox">
+                        <input type="text" id="username" name="username" placeholder="Usuario" required>
+                        <input type="password" id="password" name="password" placeholder="Contraseña" required>
+                    </div>
+                    <button>Iniciar sesión</button>
+                </div>
+            </form>
         </div>
-      </div>
-      <div class="signupMsg visibility">
-        <div class="textcontent">
-          <p class="title">¿Ya tienes una cuenta?</p>
-          <p>Ingresa para no descuidar tus tareas.</p>
-          <button id="switch2">Iniciar sesion</button>
+
+        <div class="frontbox signup hide"> <!-- Agregado hide -->
+            <form action="/registrar" method="post">
+                <div class="signup">
+                    <h2>REGISTRARSE</h2>
+                    <div class="inputbox">
+                        <input type="text" name="new_username" placeholder="Usuario">
+                        <input type="password" name="new_password" placeholder="Contraseña">
+                    </div>
+                    <button>Registrarse</button>
+                </div>
+            </form>
         </div>
-      </div>
     </div>
-    <!-- backbox -->
-
-    <form action="/inicio_sesion" method="post">
-    <div class="frontbox">
-      <div class="login">
-        <h2>INICIAR SESION</h2>
-        <div class="inputbox">
-          <input type="text" id="username" name="username" placeholder="Usuario" required>
-          <input type="password" id="password" name="password" placeholder="Contraseña" required>
-        </div>
-        
-        <button>Iniciar sesion</button>
-      </div>
-    </form>
-
- <form action="/registrar" method="post">
-      <div class="signup hide">
-        <h2>REGISTRARSE</h2>
-        <div class="inputbox">
-        
-          <input type="text" name="new_username" placeholder="  Usuario">
-          <input type="password" name="new_password" placeholder="  Contraseña">
-        </div>
-        <button>Registrarse</button>
-  </form>
-      </div>
-
+<div class="message-container" id="messageContainer">
+        <!-- Espacio para mensajes -->
     </div>
-    <!-- frontbox -->
-  </div>
- 
 </body>
-
 </html>
