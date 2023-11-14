@@ -19,6 +19,7 @@ connection.getConnection((err, connection) => {
       res.status(500).send('Lo siento, no se pudo establecer una conexión con la base de datos en este momento. Por favor, inténtalo de nuevo más tarde.');
     } else {
       console.log('Conexión exitosa a la base de datos MySQL');
+      connection.release();  
     }
   });
   
@@ -37,7 +38,7 @@ function obtenerUserId(username, callback) {
         } else {
             console.log('Usuario no encontrado para:', username);
             callback(null, null);
-        }
+        }   
     });
 }
 

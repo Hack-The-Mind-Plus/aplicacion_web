@@ -19,9 +19,21 @@ app.use(express.json());
 app.use(sessionMiddleware);
 
 // Ruta para proteger los archivos de backend
-app.use(['/conexion.js', '/rutas.js','/session.js','/tareas.js', '/.env'], (req, res, next) => {
-    res.sendStatus(404); // Devuelve un estado "Forbidden" (403) si alguien intenta acceder a estas rutas
+app.use(['/conexion.js', '/rutas.js', '/session.js', '/tareas.js', '/.env','/error400.html','/error401.html','/error404.html','/error500.html','/error503.html','/mensajes.css','/mensajes.js'], (req, res, next) => {
+    res.status(404);
+    res.sendFile(__dirname + '/error404.html');
 });
+
+
+// Manejador de errores para solicitudes no autorizadas
+app.use((err, req, res, next) => {
+    // Loguear el error no autorizado
+    console.error('Solicitud no autorizada:', req.method, req.originalUrl);
+
+    res.status(500);
+    res.sendFile(__dirname + '/error500.html');
+});
+
 
 
 // Configurar una ruta estática para servir archivos CSS y otros archivos estáticos
@@ -50,7 +62,8 @@ app.post('/registrar', (req, res) => {
     const { new_username, new_password } = req.body; // Obtener datos del formulario
 
     if (!new_username || !new_password) {
-        return res.status(400).send('Por favor, ingresa nombre de usuario y contraseña.');
+        return res.status(400),
+        res.sendFile(__dirname +'/error400.html');
     }
 
     // Consulta SQL para verificar si el usuario ya existe
@@ -58,16 +71,18 @@ app.post('/registrar', (req, res) => {
     connection.query(checkUserSql, [new_username], (checkError, checkResults) => {
         if (checkError) {
             console.error('Error al verificar el usuario:', checkError);
-            res.status(500).send('Error al verificar el usuario. Por favor, inténtalo de nuevo.');
+            res.status(500);
+            res.sendFile(__dirname + '/error500.html');
         } else if (checkResults.length > 0) {
             // El usuario ya existe
-            res.send('El usuario ya existe. Por favor, elige otro nombre de usuario.<a href = "/registro.html">Volver a intentarlo</a>');
+            res.send('El usuario ya existe. Por favor, elige otro nombre de usuario.<a href = "/login.html">Volver a intentarlo</a>');
         } else {
             // El usuario no existe, procede con el registro
             bcrypt.hash(new_password, saltRounds, (hashError, hash) => {
                 if (hashError) {
                     console.error('Error al hashear la contraseña:', hashError);
-                    res.status(500).send('Error al registrar el usuario, inténtalo de nuevo');
+                    res.status(500);
+                    res.sendFile(__dirname + '/error500.html');
                 } else {
                     // Consulta SQL para insertar el nuevo usuario
                     const insertUserSql = 'INSERT INTO Usuarios (user_name, password) VALUES (?, ?)';
@@ -76,10 +91,12 @@ app.post('/registrar', (req, res) => {
                     connection.query(insertUserSql, values, (insertError, results) => {
                         if (insertError) {
                             console.error('Error al registrar el usuario:', insertError);
-                            res.status(500).send('Error al registrar el usuario. Por favor, inténtalo de nuevo.');
+                            res.status(500);
+                            res.sendFile(__dirname + '/error500.html');
                         } else {
                             console.log('Usuario registrado con éxito');
                             res.send('Registro exitoso. Inicia sesión <a href="/login.html">aquí</a>.');
+    
                         }
                     });
                 }
@@ -95,7 +112,8 @@ app.post('/inicio_sesion', (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-        return res.status(400).send('Por favor, ingresa nombre de usuario y contraseña.');
+        return res.status(400),
+        res.sendFile(__dirname +'/error400.html');
     }
 
     // Consulta SQL para obtener la contraseña almacenada para el usuario
@@ -103,18 +121,21 @@ app.post('/inicio_sesion', (req, res) => {
     connection.query(sql, [username], (error, results) => {
         if (error) {
             console.error('Error al buscar el usuario:', error);
-            res.status(500).json({ authenticated: false });
+            res.status(500);
+            res.sendFile(__dirname + '/error500.html');
         } else if (results.length === 0) {
             // Usuario no encontrado
             console.log(req.session.authenticated);
-            res.status(500).send('Contraseña o usuario incorrectos, por favor, intentalo de nuevo: <a href="/login.html">aquí</a>.');
+            res.status(401); 
+            res.sendFile(__dirname + '/error401.html');
         } else {
             // El usuario fue encontrado, se procede a comparar la contraseña ingresada con la contraseña almacenada
             const storedHash = results[0].password;
             bcrypt.compare(password, storedHash, (err, match) => {
                 if (err) {
                     console.error('Error al comparar contraseñas:', err);
-                    res.status(500).json({ authenticated: false });
+                    res.status(500);
+                    res.sendFile(__dirname + '/error500.html');
                 } else if (match) {
                     // Las contraseñas coinciden, autenticación exitosa
                     console.log("las contraseñas coincidieron")
@@ -123,23 +144,27 @@ app.post('/inicio_sesion', (req, res) => {
                      obtenerUserId(username, (dbError, userId) => {
                         if (dbError) {
                             // Manejar el error de la base de datos
-                            res.status(500).json({ authenticated: false });
+                            res.status(500);
+                            res.sendFile(__dirname + '/error500.html');
                         } else if (userId) {
                             // Asignar el userId a la sesión
                             req.session.userId = userId;
                             req.session.authenticated = true;
                             req.session.username = username;
                             res.redirect('/index.html');
+                            
                         } else {
                             // El usuario no fue encontrado
-                            res.status(500).send('Usuario no encontrado: por favor ingresa de nuevo: <a href="/login.html">aquí</a>.');
+                            res.status(500);
+                            res.sendFile(__dirname + '/error500.html');
                         }
                     });
                 } else {
                     // Las contraseñas no coinciden
                     console.log("las contraseñas no coincidieron")
                     req.session.authenticated = false;
-                    res.status(500).send('Contraseña o usuario incorrectos, por favor, intentalo de nuevo: <a href="/login.html">aquí</a>.');
+                    res.status(401); 
+                    res.sendFile(__dirname + '/error401.html');
                     console.log(req.session.authenticated);
                 }
             });
@@ -157,7 +182,8 @@ app.get('/index.html',(req,res) => {
     } else {
         //usuario no autenticado
         console.log("El usuario no está autenticado");
-        res.sendFile(__dirname + '/login.html');
+        res.status(401); 
+        res.sendFile(__dirname + '/error401.html');
     }
    
 });
@@ -195,7 +221,8 @@ app.use('/api', tareas);
 
 // Manejador de errores 404
 app.use((req, res, next) => {
-    res.status(404).send('Not Found: 404');
+    res.status(404);
+    res.sendFile(__dirname + '/404.html');
   });
 
 // Puerto de escucha

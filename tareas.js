@@ -46,6 +46,7 @@ router.post('/crear_tarea', sessionMiddleware,  (req, res) => {
 
     nuevaTarea.id = results.insertId;
     return res.status(201).json(nuevaTarea);
+   
   });
 });
 
@@ -75,6 +76,7 @@ router.post('/crear_tarea', sessionMiddleware,  (req, res) => {
       // Los resultados de la consulta deben ser enviados como respuesta en formato JSON.
       res.json(results);
       console.log("resultados:", results);
+     
   });
 });
 
@@ -94,6 +96,7 @@ router.post('/actualizar_estado_tarea', sessionMiddleware, (req, res) => {
       }
 
       return res.status(200).json({ message: 'Estado de tarea actualizado correctamente' });
+      
   });
 });
 
@@ -114,6 +117,7 @@ router.put('/editar_tarea/:taskId', sessionMiddleware, (req, res) => {
 
       // La tarea se actualizó correctamente
       res.status(200).json({ message: 'Tarea actualizada con éxito' });
+    
   });
 });
 
@@ -134,6 +138,7 @@ router.delete('/eliminar_tarea/:taskId', sessionMiddleware, (req, res) => {
 
     // La tarea se eliminó correctamente
     res.status(200).json({ message: 'Tarea eliminada con éxito' });
+  
   });
 });
 

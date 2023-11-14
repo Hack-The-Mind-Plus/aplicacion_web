@@ -20,6 +20,7 @@ module.exports = session({
     store: new MySQLStore({ ...dbConnection, useUniqueIDs: true, stringify: true}), //se crea un almacenamiento de sesiones en la BD
     cookie: {
         secure: false,
+        httpOnly: true,
         maxAge: 1000*60*60,
     }
 });
@@ -27,7 +28,7 @@ module.exports = session({
 const sessionStore = new MySQLStore({ ...dbConnection, useUniqueIDs: true, stringify: true});
   
 
-// Ejecuta la función `clearExpiredSessions()` cada minuto.
+// Ejecuta la función `clearExpiredSessions()` cada hora.
 setInterval(() => {
   console.log("se destruyeron las sesiones expiradas");
   sessionStore.clearExpiredSessions();
